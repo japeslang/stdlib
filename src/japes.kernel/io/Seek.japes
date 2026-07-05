@@ -1,0 +1,68 @@
+﻿#comment License
+
+ This file is part of the Japes Programming Language.
+
+ Japes is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as
+ published by the Free Software Foundation, either version 3 of
+ the License, or (at your option) any later version.
+
+ Japes is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public
+ License along with Japes.  If not, see <http://www.gnu.org/licenses/>.
+
+#endcomment
+
+namespace japes.io;
+
+/**
+ * @brief The origin from which a seek operation is oriented.
+ */
+public enum Whence {
+    /*@! Make a seek operation relative to the beginning of the sequence. */
+    BEGIN,
+    /*@! Make a seek operation relative to the end of the sequence. */
+    CURRENT,
+    /*@! Make a seek operation relative to the end of a sequence.
+     */
+    END
+}
+
+/**
+ * @brief A refinement of @tp IChannel which allows its position to
+ * be set.
+ */
+public interface ISeekable?[P,O] : IChannel
+    where P : INumber?[P]
+    where O : INumber?[O] {
+    #region Properties
+
+    /**
+     * @brief The current position of the channel.
+     */
+    public P Position { get; }
+
+    #endregion Properties
+
+    #region Basic I/O
+
+    /**
+     * @brief Set the position of the stream.
+     *
+     * @param The offset relative to @p whence to set.
+     * @param The origin of the position calcuation.
+     */
+    public bool Seek(O offset, Whence whence);
+
+    #endregion Basic I/O
+}
+
+/**
+ * @brief A refinement of @tp ISeekable?[P,O] that works with `size_t` and
+ * `ssize_t`.
+ */
+public interface ISeekable : ISeekable?[size_t, ssize_t] { }

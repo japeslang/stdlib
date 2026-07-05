@@ -1,0 +1,79 @@
+#comment License
+
+ This file is part of the Japes Programming Language.
+
+ Japes is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as
+ published by the Free Software Foundation, either version 3 of
+ the License, or (at your option) any later version.
+
+ Japes is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public
+ License along with Japes.  If not, see <http://www.gnu.org/licenses/>.
+
+#endcomment
+
+namespace japes.io;
+
+#region Interfaces
+
+/**
+ * @brief An interface specifying an object that can encode an object of type
+ * @tp I into an object of @tp O.
+ *
+ * @tparam I The input type associated with the encoder.
+ * @tparam O The output type associated with the encoder.
+ */
+public interface IEncoder?[I, O] : ISink?[I], ISource?[O] {
+	/**
+	 * @brief Consume the datum @p value and yield a compatible or transformed
+	 * instance of @tp O.
+	 *
+	 * @param value The value to encode.
+	 * @returns The encoded value.
+	 */
+	public O Consume(I value);
+}
+
+/**
+ * @brief An interface specifying an object that can supply an @tp IEncoder for
+ * the purposes of encoding a value.
+ *
+ * @tparam I The input type associated with the encodable.
+ * @tparam O The output type associated with the encodable.
+ */
+public interface IEncodable?[I, O] {
+	/**
+	 * @brief Obtain the encoder associated with this object.
+	 */
+	public IEncoder?[I, O] GetEncoder();
+}
+
+/**
+ * @brief An interface specifying an object that can supply an @tp IEncoder
+ * for the purposes of decoding a value.
+ *
+ * @tparam I The input type associated with the decoder.
+ * @tparam O The output type associated with the decoder.
+ */
+public interface IDecodable?[I, O] {
+	/**
+	 * @brief Obtain the decoder associated with this object.
+	 */
+	public IEncoder?[O, I] GetDecoder();
+}
+
+/**
+ * @brief An interface specifying an object that can supply @tp IEncoder
+ * instances for the purposes of encoding and decoding values.
+ *
+ * @tparam I The input type associated with the codec.
+ * @tparam O The output type associated with the codec.
+ */
+public interface ICodec?[I, O]: IEncodable?[I, O], IDecodable?[I, O] { }
+
+#endregion Interfaces

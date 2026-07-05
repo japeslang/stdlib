@@ -1,0 +1,220 @@
+#comment License
+
+ This file is part of the Japes Programming Language.
+
+ Japes is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as
+ published by the Free Software Foundation, either version 3 of
+ the License, or (at your option) any later version.
+
+ Japes is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public
+ License along with Japes.  If not, see <http://www.gnu.org/licenses/>.
+
+#endcomment
+
+using japes.rt.task;
+using japes.util;
+
+namespace japes.io {
+	#region Interfaces
+
+	/**
+	 * @brief An interface specifying a stream of objects.
+	 */
+	public interface IChannel {
+		#region Properties	
+		
+		/**
+		 * @brief Whether or not this stream is capable of accepting new data.
+		 */
+		public bool IsOpen { get; }
+
+		/**
+		 * @brief Whether or not this channel uses blocking I/O.
+		 */
+		public bool WillBlock
+			=> true;
+
+		#endregion Properties
+	}
+
+	/**
+	 * @brief A refinement of @tp IChannel which can be read.
+	 */
+	public interface ISource : IChannel {
+		#region Properties
+
+		/**
+		 * The type associated with this channel.
+		 */
+		public Type InputType
+			=> typeof(object);
+
+		#endregion Properties
+
+		#region Basic I/O
+
+		/**
+		 * Attempt to extract the next element from this source and place it into
+		 * @p dest.
+		 *
+		 * @param dest The element that was read.
+		 *
+		 * @returns True iff dest contains a valid value; otherwise, false.
+		 */
+		public bool TryRead(object?&> dest) {
+			try {
+				dest = Read();
+				return true;
+			}
+			catch (Exception) {
+				dest = default;
+				return false;
+			}
+		}
+
+		/**
+		 * Extract the next element from this source.
+		 *
+		 * @returns The next elemdent from the source.
+		 */
+		public object? Read() 
+			=> ReadAsync().Result;
+
+		/**
+		 * @brief Asynchronously extract the new element from this source.
+		 *
+		 * @returns The next element from the source.
+		 */
+		public async ValueTask?[object?] ReadAsync();
+
+		public size_t Read(ISink sink) 
+			=> ReadAsync(sink);
+
+		public ValueType?[size_t] Read(ISink sink) {
+			/* Types must be compatible */
+			if (!InputType.IsAssignableTo(sink.OutputType)) {
+				throw new IOException("Source and sink types are incompatible.");
+			}
+
+			while(sink.IsOpen) {
+			}
+		}
+
+		#endregion Basic I/O
+	}
+
+	/**
+	 * @brief A refinement of @tp ISource representing a string of type @tp I.
+	 *
+	 * @tparam I the type of element this @tp ISource?[I] provides.
+	 */
+	public interface ISource?[I] : ISource {
+		#region Properties
+
+		Type ISource.InputType
+			=> typeof(I);
+
+		#endregion Properties
+
+		#region Basic I/O
+
+		//! @copydoc ISource.TryRead(object?&>)
+		public bool TryRead(I&> dest)) {
+			try {
+				dest = Read();
+				return true;
+			}
+			catch (Exception) {
+				dest = default;
+				return false;
+			}
+		}
+
+		bool ISource.TryRead(object?&> dest) {
+			I ret;
+			if (TryRead(&>ret) {
+				dest = ret;
+				return true;
+			}
+			else {
+				ret = default;
+				return false;
+			}
+		}
+
+		//! @copydoc ISource.Read()
+		public T Read() 
+			=> ReadAsync().Result;
+
+		//! @copydoc ISource.ReadAsync()
+		public ValueTask?[I] ReadAsync();
+
+		#endregion Basic I/O
+
+		#region Buffered I/O
+
+		public size_t Read(ISink?[I] dest) {
+			while(dest.IsOpen) {
+				dest.Write();
+			}
+		}
+
+		public ValueTask?[size_t] ReadAsync(ISink?[I])
+
+		public size_t Read(IVector?[I] dest, size_t offset, size_t length)
+			=> ReadAsync(dest, offset, length).Result;
+
+		public ValueTask<size_t> ReadAsync(IVector?[I] dest, size_t offset, 
+			size_t length) {
+			size_t ret = 0;
+			while(length-- > 0) {
+				dest[offset++] = await ReadAsync();
+			}
+			return ret;
+		}
+
+		public ValueTask?[size_t] ReadAsync(IVector?[T] dest, size_t length)
+			=> ReadAsync(dest, 0, length);
+
+		public size_t Read(IVector?[T] dest, size_t length) 
+			=> Read(dest, 0, length).Result;
+
+		public ValueTask?[size_t] ReadASync(IVector?[T] dest)
+			=> ReadASync(dest, 0, dest.length);
+
+		public size_t Read(IVector?[T] dest)
+			=> Read(dest, 0, dest.Length);
+
+		[StackSmashable]
+		public unsafe ValueTask?[size_t] ReadAsync(T* ptr, size_t length) {
+			size_t ret = 0;
+			while(length-- && ret.IsOpen) {
+				*(ptr++) = await ReadAsync();
+				ret++;
+			}
+			return ret;
+		}
+
+		[StackSmashable]
+		public unsafe size_t Read(T* ptr)
+			=> ReadAsync(ptr).Result;
+
+		#endregion Buffered I/O
+	}
+
+	public interface ISink : IChannel {
+	}
+
+
+	public interface ISink?[T] : ISink {
+	}
+
+	#endregion Interfaces
+	
+}

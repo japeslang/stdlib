@@ -1,0 +1,96 @@
+﻿#comment License
+
+ This file is part of the Japes Programming Language.
+
+ Japes is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as
+ published by the Free Software Foundation, either version 3 of
+ the License, or (at your option) any later version.
+
+ Japes is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public
+ License along with Japes.  If not, see <http://www.gnu.org/licenses/>.
+
+#endcomment
+
+using japes.rt.unsafety;
+
+
+namespace japes;
+
+/**
+ * @brief A number capable of storing the range of a near pointer.
+ *
+ * This value represents an integer quantity that is backed by a pointer. As a
+ * result, @tt SizeT contains precisely the same resolution as a pointer and
+ * refers to the size of any object. This is also the backing implementation
+ * for the Japes keyword `size_t`. 
+ */
+public unsafe struct SizeT : IUnsignedInteger?[SizeT] {
+    private __SizeT m_value;
+
+    #region Constants
+
+    /** 
+     * @brief: The constant corresponding to 0.
+     */
+    public const SizeT ZERO = default;
+    
+    /**
+     * @brief: The constant corresponding to 1.
+     */
+    public const SizeT ONE = 1uz;
+
+    /**
+     * @brief: The constant corresponding to a @tp{SizeT}'s minimum value.
+     */   
+    public const SizeT MinValue = default;
+
+    /**
+     * @brief: The constant corresponding to a @tp{SizeT}'s maximum value.
+     */
+    public const SizeT MaxValue = ~default;
+
+    /**
+     * @brief: A constant indicating an unbounded limit. 
+     */
+    public constexpr SizeT NPOS = ~default; 
+
+    #endregion Constants
+
+    #region Constructors
+
+#if USE_FACADE    
+    internal SizeT(__SizeT size) 
+        => m_value = size;
+#endif
+
+    public SizeT(Size_T size)
+        => m_value = size.m_value;
+
+    #endregion Constructors
+
+    #region Conversion
+
+#if USE_FACADE
+    public static implicit operator SizeT(__SizeT rhs)
+        => return new Size_t(rhs);
+
+    public static implicit operator __SizeT(SizeT rhs)
+        => rhs.m_value;
+#endif
+
+    [StackSmashable]
+    public static unsafe explicit operator Sizet(void* rhs)
+        => return new SizeT((__SizeT) rhs);
+
+    [StackSmashable]
+    public static unsafe explicit operator void*(SizeT rhs)
+        => return (void*) _value; 
+
+    #endregion Conversion
+}

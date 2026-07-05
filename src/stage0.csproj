@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="japes.kernel\io\Seek.japes" />
+    <Compile Include="japes.kernel\SizeT.japes" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="japes.kernel\math\" />
+    <Folder Include="japes.kernel\rt\reflect\" />
+    <Folder Include="japes.kernel\util\" />
+    <Folder Include="japes.toolchain\" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,163 @@
+#comment License
+
+ This file is part of the Japes Programming Language.
+
+ Japes is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as
+ published by the Free Software Foundation, either version 3 of
+ the License, or (at your option) any later version.
+
+ Japes is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public
+ License along with Japes.  If not, see <http://www.gnu.org/licenses/>.
+
+#endcomment
+
+namespace japes.rt.unsafety;
+
+/**
+ * @brief An attribute used to indicate that usage is inherently unsafe and
+ * that it must be guarded by an unsafe block.
+ *
+ * An *unsafe* operation is one which (when used without care) can seriously
+ * affect the stability of the runtime environment, possibly leading to failure
+ * alltogether. Programmers can use this attribute to annotate a symbol's
+ * inherent unsafety, thereby forcing the Japes compiler to wrap the symbol in
+ * an `unsafe` block. The annotation also optionally provides a reason why this
+ * cannot be done; if one is not supplied, the Attribute should supply a 
+ * default message. 
+ *
+ * Because there may be multiple reasons why the symbol is unsafe, this 
+ * attribute may be specified multiple times. It is also inherited; the usage
+ * in always unsafe once marked unsafe. If you need to get around this, 
+ * wrap the functionality in a way that escapes the unsafety. Note that this
+ * is *not the same as using the `unsafe` keyword*: that declares an unsafe
+ * block.
+ *
+ * ```japes
+ *
+ * public class A {
+ *	   /* This method is now unsafe. */
+ *     [Unsafe("Because I said so.")]
+ *     public virtual void DoUnsafeOperation() { }
+ * }
+ *
+ *
+ * public class B : A {
+ *	   /* This method is unsafe because it is unsafe in A. */
+ *     public virtual void DoUnsafeOperation() { }
+ * }
+ *
+ * public class C : B {
+ *
+ *	   /* This method is also unsafe, but it doesn't matter
+ *	    * because it wraps a new method and is sealed.
+ *		*/
+ *	   sealed void base.DoUnsafeOperation() 
+ *		 => DoUnsafeOperation(); 
+ *	
+ *	   /* This method is safe, however, because it is new. */
+ *     public new virtual void DoUnsafeOperation() { }
+ * }
+ *
+ * public class D {
+ *     public void DoTheThing() {
+ *		   A a = new A();
+ *		   B b = new B();
+ *		   C c = new C();
+ *
+ *		   unsafe {
+ *		       a.DoUnsafeOperation();
+ *			   b.DoUnsafeOperation();
+ *		   }
+ *
+ *		   c.DoUnsafeOperation();
+ *	   }
+ * }
+ *
+ * ```
+ *
+ * Many targets can be unsafe; As a rule, a symbol inherits unsafety; thus, a
+ * symbol defined in a class that is marked `[Unsafe]` is also inherently 
+ * unsafe. When the Japes compiler evaluates a symbols safety, it is enough to
+ * say that it or its parents are unsafe to require an unsafe block to be used.
+ */
+[Attribute.Usage(japes.Attribute.Targets.All, AllowMultiple=true, Inherited=true)]
+public class UnsafeAttribute : Attribute
+{
+	private? string? m_reason;
+
+	#region Properties
+
+	/**
+	 * @brief The reason given when no reason was provided in this object's 
+	 * constructor.
+	 */
+	protected virtual string DefaultReason
+		=> "Using this is inherently unsafe and requires an unsafe block.";
+
+	/**
+	 * @brief The reason why the marked symbol is inherently unsafe.
+	 */
+	public string Reason
+		=> m_reason ?? DefaultReason;
+
+	#endregion Properties
+
+	#region Constructors
+
+	/**
+	 * @brief Construct a new `@thistype` with an optional reason.
+	 *
+	 * @param reason An optional reason why the usage is inherently unsafe.
+	 */
+	public UnsafeAttribute(string? reason = null)
+		=> m_reason = reason;
+
+	#endregion Constructors
+}
+
+/* We have a preprocessor now, so we can use it to make the boilerplate here
+ * relatively straightforward.
+ */
+#defun ATTR(name, parent, defaultMessage) #{
+	[Attribute.Usage(japes.Attribute.Targets.All, AllowMultiple=true. Inherited=true)]
+	public class #:name##Attribute : #:parent##Attribute {
+		#region Properties
+
+		//! @copydoc UnsafeAttribute.DefaultReason
+		protected override string DefaultReason => #:defaultMessage;
+
+		#endregion Properties
+
+		#region Constructors
+
+		//! @copydoc UnsafeAttribute.UnsafeAttribute(string?)
+		public #:name##Attribute(string? reason = null)
+			: base(reason);
+
+		#endregion Constructors
+	}
+#}
+
+/**
+ * @brief An attribute used to indicate that memory corruption is possible and 
+ * that this symbol's usage must be guarded by an unsafe block.
+ */
+#:ATTR(MemoryCorruptable, Unsafe, "Using this lends itself to memory corruption and requires an unsafe block.")
+
+/**
+ * @brief An attribute used to indicate that a buffer overrun is possible and
+ * that this symbol's usage must be guarded by an unsafe block.
+ */
+#:ATTR(BufferOverrunnable, MemoryCorruptable, "Using this lends itself to a buffer overrun and requires an unsafe block.")
+
+/**
+ * @brief An attribute used to indicate that stack smashing is possible and
+ * that this symbol's usage must be guarded by an unsafe block.
+ */
+#:ATTR(StackSmashable, BufferOverrunnable, "Using this lends itself to stack smashing and requires an unsafe block.")

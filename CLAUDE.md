@@ -49,3 +49,5 @@ BEFORE starting any task, check your current session context. If the global proj
 	- It is abstract and can be subclassed to `japes.Array?[T]`, an abstract array with elements of type  `T`. It implements `japes.util.ITensor?[T]`.
 	- `japes.Array1D?[T]` is a 1-dimensional array (vector) of type `T` that is a refinement of `japes.Array?[T]`. It represents a plain single-dimensional array.
 	- `japes.Array2D?[T]` is a 2-dimensionalarray (vector) of type `T` that is a refinement of `japes.Array?[T]`. It represents a plain two-dimensional array.
+- The `japes.Attribute` class represents a compile-time attribute that can be used to annotate a program element.
+	- When invoking an `NameAttribute` using the annotation syntax `[Name]`, the 

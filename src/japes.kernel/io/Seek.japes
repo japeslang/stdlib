@@ -36,9 +36,9 @@ public enum Whence {
  * @brief A refinement of @tp IChannel which allows its position to
  * be set.
  */
-public interface ISeekable?[P,O] : IChannel
-    where P : INumber?[P]
-    where O : INumber?[O] {
+public interface ISeekable$[P,O] : IChannel
+    where P : INumber$[P]
+    where O : INumber$[O] {
     #region Properties
 
     /**
@@ -62,7 +62,7 @@ public interface ISeekable?[P,O] : IChannel
 }
 
 /**
- * @brief A refinement of @tp ISeekable?[P,O] that works with `size_t` and
+ * @brief A refinement of @tp ISeekable$[P,O] that works with `size_t` and
  * `ssize_t`.
  */
-public interface ISeekable : ISeekable?[size_t, ssize_t] { }
+public interface ISeekable : ISeekable$[size_t, ssize_t] { }

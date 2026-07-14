@@ -28,7 +28,7 @@ namespace japes.io;
  * @tparam I The input type associated with the encoder.
  * @tparam O The output type associated with the encoder.
  */
-public interface IEncoder?[I, O] : ISink?[I], ISource?[O] {
+public interface IEncoder$[I, O] : ISink$[I], ISource$[O] {
 	/**
 	 * @brief Consume the datum @p value and yield a compatible or transformed
 	 * instance of @tp O.
@@ -46,11 +46,11 @@ public interface IEncoder?[I, O] : ISink?[I], ISource?[O] {
  * @tparam I The input type associated with the encodable.
  * @tparam O The output type associated with the encodable.
  */
-public interface IEncodable?[I, O] {
+public interface IEncodable$[I, O] {
 	/**
 	 * @brief Obtain the encoder associated with this object.
 	 */
-	public IEncoder?[I, O] GetEncoder();
+	public IEncoder$[I, O] GetEncoder();
 }
 
 /**
@@ -60,11 +60,11 @@ public interface IEncodable?[I, O] {
  * @tparam I The input type associated with the decoder.
  * @tparam O The output type associated with the decoder.
  */
-public interface IDecodable?[I, O] {
+public interface IDecodable$[I, O] {
 	/**
 	 * @brief Obtain the decoder associated with this object.
 	 */
-	public IEncoder?[O, I] GetDecoder();
+	public IEncoder$[O, I] GetDecoder();
 }
 
 /**
@@ -74,6 +74,6 @@ public interface IDecodable?[I, O] {
  * @tparam I The input type associated with the codec.
  * @tparam O The output type associated with the codec.
  */
-public interface ICodec?[I, O]: IEncodable?[I, O], IDecodable?[I, O] { }
+public interface ICodec$[I, O]: IEncodable$[I, O], IDecodable$[I, O] { }
 
 #endregion Interfaces

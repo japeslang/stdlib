@@ -30,7 +30,7 @@ namespace japes;
  * refers to the size of any object. This is also the backing implementation
  * for the Japes keyword `size_t`. 
  */
-public unsafe struct SizeT : IUnsignedInteger?[SizeT] {
+public unsafe struct SizeT : IUnsignedInteger$[SizeT] {
     private __SizeT m_value;
 
     #region Constants

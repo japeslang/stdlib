@@ -7,13 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="japes.kernel\io\Seek.japes" />
-    <Compile Include="japes.kernel\SizeT.japes" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Folder Include="japes.kernel\io\" />
     <Folder Include="japes.kernel\math\" />
-    <Folder Include="japes.kernel\rt\reflect\" />
+    <Folder Include="japes.kernel\rt\" />
     <Folder Include="japes.kernel\util\" />
     <Folder Include="japes.toolchain\" />
   </ItemGroup>

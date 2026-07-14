@@ -91,12 +91,12 @@ namespace japes.io {
 		 *
 		 * @returns The next element from the source.
 		 */
-		public async ValueTask?[object?] ReadAsync();
+		public async ValueTask$[object?] ReadAsync();
 
 		public size_t Read(ISink sink) 
 			=> ReadAsync(sink);
 
-		public ValueType?[size_t] Read(ISink sink) {
+		public ValueType$[size_t] Read(ISink sink) {
 			/* Types must be compatible */
 			if (!InputType.IsAssignableTo(sink.OutputType)) {
 				throw new IOException("Source and sink types are incompatible.");
@@ -112,9 +112,9 @@ namespace japes.io {
 	/**
 	 * @brief A refinement of @tp ISource representing a string of type @tp I.
 	 *
-	 * @tparam I the type of element this @tp ISource?[I] provides.
+	 * @tparam I the type of element this @tp ISource$[I] provides.
 	 */
-	public interface ISource?[I] : ISource {
+	public interface ISource$[I] : ISource {
 		#region Properties
 
 		Type ISource.InputType
@@ -153,24 +153,24 @@ namespace japes.io {
 			=> ReadAsync().Result;
 
 		//! @copydoc ISource.ReadAsync()
-		public ValueTask?[I] ReadAsync();
+		public ValueTask$[I] ReadAsync();
 
 		#endregion Basic I/O
 
 		#region Buffered I/O
 
-		public size_t Read(ISink?[I] dest) {
+		public size_t Read(ISink$[I] dest) {
 			while(dest.IsOpen) {
 				dest.Write();
 			}
 		}
 
-		public ValueTask?[size_t] ReadAsync(ISink?[I])
+		public ValueTask$[size_t] ReadAsync(ISink$[I])
 
-		public size_t Read(IVector?[I] dest, size_t offset, size_t length)
+		public size_t Read(IVector$[I] dest, size_t offset, size_t length)
 			=> ReadAsync(dest, offset, length).Result;
 
-		public ValueTask<size_t> ReadAsync(IVector?[I] dest, size_t offset, 
+		public ValueTask<size_t> ReadAsync(IVector$[I] dest, size_t offset, 
 			size_t length) {
 			size_t ret = 0;
 			while(length-- > 0) {
@@ -179,20 +179,20 @@ namespace japes.io {
 			return ret;
 		}
 
-		public ValueTask?[size_t] ReadAsync(IVector?[T] dest, size_t length)
+		public ValueTask$[size_t] ReadAsync(IVector$[T] dest, size_t length)
 			=> ReadAsync(dest, 0, length);
 
-		public size_t Read(IVector?[T] dest, size_t length) 
+		public size_t Read(IVector$[T] dest, size_t length) 
 			=> Read(dest, 0, length).Result;
 
-		public ValueTask?[size_t] ReadASync(IVector?[T] dest)
+		public ValueTask$[size_t] ReadASync(IVector$[T] dest)
 			=> ReadASync(dest, 0, dest.length);
 
-		public size_t Read(IVector?[T] dest)
+		public size_t Read(IVector$[T] dest)
 			=> Read(dest, 0, dest.Length);
 
 		[StackSmashable]
-		public unsafe ValueTask?[size_t] ReadAsync(T* ptr, size_t length) {
+		public unsafe ValueTask$[size_t] ReadAsync(T* ptr, size_t length) {
 			size_t ret = 0;
 			while(length-- && ret.IsOpen) {
 				*(ptr++) = await ReadAsync();
@@ -212,7 +212,7 @@ namespace japes.io {
 	}
 
 
-	public interface ISink?[T] : ISink {
+	public interface ISink$[T] : ISink {
 	}
 
 	#endregion Interfaces

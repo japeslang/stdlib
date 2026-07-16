@@ -125,7 +125,7 @@ namespace japes.io {
 		#region Basic I/O
 
 		//! @copydoc ISource.TryRead(object?&>)
-		public bool TryRead(I&> dest)) {
+		public bool TryRead(I&> dest) {
 			try {
 				dest = Read();
 				return true;
@@ -138,7 +138,7 @@ namespace japes.io {
 
 		bool ISource.TryRead(object?&> dest) {
 			I ret;
-			if (TryRead(&>ret) {
+			if (TryRead(&>ret)) {
 				dest = ret;
 				return true;
 			}
@@ -165,12 +165,14 @@ namespace japes.io {
 			}
 		}
 
-		public ValueTask$[size_t] ReadAsync(ISink$[I])
+		public ValueTask$[size_t] ReadAsync(ISink$[I] dest) {
+			throw new NotImplementedException();
+		}
 
 		public size_t Read(IVector$[I] dest, size_t offset, size_t length)
 			=> ReadAsync(dest, offset, length).Result;
 
-		public ValueTask<size_t> ReadAsync(IVector$[I] dest, size_t offset, 
+		public ValueTask$[size_t] ReadAsync(IVector$[I] dest, size_t offset, 
 			size_t length) {
 			size_t ret = 0;
 			while(length-- > 0) {
@@ -182,17 +184,17 @@ namespace japes.io {
 		public ValueTask$[size_t] ReadAsync(IVector$[T] dest, size_t length)
 			=> ReadAsync(dest, 0, length);
 
-		public size_t Read(IVector$[T] dest, size_t length) 
+		public size_t Read(IVector$[I] dest, size_t length) 
 			=> Read(dest, 0, length).Result;
 
-		public ValueTask$[size_t] ReadASync(IVector$[T] dest)
+		public ValueTask$[size_t] ReadASync(IVector$[I] dest)
 			=> ReadASync(dest, 0, dest.length);
 
 		public size_t Read(IVector$[T] dest)
 			=> Read(dest, 0, dest.Length);
 
 		[StackSmashable]
-		public unsafe ValueTask$[size_t] ReadAsync(T* ptr, size_t length) {
+		public unsafe ValueTask$[size_t] ReadAsync(I* ptr, size_t length) {
 			size_t ret = 0;
 			while(length-- && ret.IsOpen) {
 				*(ptr++) = await ReadAsync();
@@ -212,7 +214,7 @@ namespace japes.io {
 	}
 
 
-	public interface ISink$[T] : ISink {
+	public interface ISink$[O] : ISink {
 	}
 
 	#endregion Interfaces
